@@ -67,5 +67,18 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	UFUNCTION(Server, Reliable)
+	void Server_TeleportPlayer(APlayerController* TargetPlayer);
+
+	UFUNCTION(Server, Reliable)
+	void Server_TeleportPlayerTo(APlayerController* TargetPlayer, FVector Position);
+
+	UFUNCTION(BlueprintCallable, Category = "Teleport")
+	void TeleportPlayer();
+
+	UFUNCTION(BlueprintCallable, Category = "Teleport")
+	void TeleportPlayerTo(APlayerController* TargetPlayer, FVector Position);
+
+	void Server_TeleportPlayer_Implementation(APlayerController* TargetPlayer);
 };
 

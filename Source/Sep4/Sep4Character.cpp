@@ -74,6 +74,68 @@ void ASep4Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
+void ASep4Character::Server_TeleportPlayer_Implementation(APlayerController* TargetPlayer)
+{
+	if (!TargetPlayer)
+	{
+		return;
+	}
+
+	APawn* TargetPawn = TargetPlayer->GetPawn();
+
+	if(!TargetPawn)
+	{
+		return;
+	}
+
+	FVector TeleportLocation = FVector(0.0f, 0.0f, 0.0f);
+
+	TargetPawn->TeleportTo(TeleportLocation, TargetPawn->GetActorRotation());
+}
+
+void ASep4Character::Server_TeleportPlayerTo_Implementation(APlayerController* TargetPlayer, FVector Position)
+{
+	if (!TargetPlayer)
+		return;
+
+	APawn* TargetPawn = TargetPlayer->GetPawn();
+
+	if (!TargetPawn)
+		return;
+
+	TargetPawn->TeleportTo(Position, TargetPawn->GetActorRotation());
+}
+
+void ASep4Character::TeleportPlayer()
+{
+	UWorld* world = GetWorld();
+
+	if (!world) return;
+
+	APlayerController* TargetPlayer = nullptr;
+
+	for(FConstPlayerControllerIterator Iterator = world->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* playercontroller = Iterator->Get();
+
+		if(playercontroller && playercontroller !=GetController())
+		{
+			TargetPlayer = playercontroller;
+			break;
+		}
+	}
+
+	if (TargetPlayer)
+	{
+		Server_TeleportPlayer(TargetPlayer);
+	}
+}
+
+void ASep4Character::TeleportPlayerTo(APlayerController* TargetPlayer, FVector Position)
+{
+	Server_TeleportPlayerTo(TargetPlayer, Position);
+}
+
 
 void ASep4Character::Move(const FInputActionValue& Value)
 {
